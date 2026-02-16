@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C-Powered Temp Converter</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="converter.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Temperature Converter</h2>
+        <input type="number" id="tempInput" placeholder="Enter temperature" autofocus>
+        
+        <div class="buttons">
+            <button onclick="convert('CtoF')">°C to °F</button>
+            <button onclick="convert('FtoC')">°F to °C</button>
+        </div>
+        
+        <div id="result" class="result-box">Result will appear here</div>
+    </div>
+
+    <script>
+        function convert(type) {
+            let input = parseFloat(document.getElementById('tempInput').value);
+            let resultBox = document.getElementById('result');
+
+            if (isNaN(input)) {
+                resultBox.innerText = "Please enter a valid number.";
+                return;
+            }
+
+            let result = 0;
+            // Module.ccall is provided by Emscripten to call our C functions
+            if (type === 'CtoF') {
+                result = Module.ccall('celsius_to_fahrenheit', 'number', ['number'], [input]);
+                resultBox.innerText = `${input}°C = ${result.toFixed(2)}°F`;
+            } else {
+                result = Module.ccall('fahrenheit_to_celsius', 'number', ['number'], [input]);
+                resultBox.innerText = `${input}°F = ${result.toFixed(2)}°C`;
+            }
+        }
+    </script>
+</body>
+</html>
